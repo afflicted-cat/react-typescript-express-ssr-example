@@ -1,0 +1,5 @@
+{
+  "ext": "ts tsx",
+  "watch": ["server/**/*.ts", "server/**/*.tsx"],
+  "exec": "ts-node -r dotenv/config -r tsconfig-paths/register  server/index.tsx"
+}

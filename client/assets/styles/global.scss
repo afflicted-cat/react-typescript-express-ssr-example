@@ -1,0 +1,11 @@
+@import './variables';
+@import './mixins';
+@import './fonts';
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: sans-serif;
+  line-height: 1;
+}
