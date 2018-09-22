@@ -22,7 +22,7 @@ if (fs.existsSync(assetsJson)) {
 }
 
 prodRouter.get('*', cacheMiddleware, async (req: express.Request, res: express.Response) => {
-  const store = configureStore(createMemoryHistory({ initialEntries: [req.url] }), undefined);
+  const store = configureStore(createMemoryHistory({ initialEntries: [req.url] }));
   const { css: styles, js: scripts } = groupManifestAssets(staticFiles);
   const context: { url?: string; status?: number } = {};
   const url: string = req.url.split(/[?#]/)[0];

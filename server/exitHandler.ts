@@ -1,15 +1,14 @@
 // tslint:disable: no-any no-console
 const exitHandler = (options: any) => (err: any) => {
   if (options.cleanup) {
-    process.stdout.write('clean');
+    process.stdout.write('\033c');
   }
-  if (err) {
+  if (err && err.stack) {
     process.stdout.write(err.stack);
   }
   if (options.exit) {
     process.exit();
   }
-  console.log('test');
 };
 
 process.stdin.resume();

@@ -17,7 +17,7 @@ export const preloadData = <T>(branch: Array<MatchedRoute<T>>, store: Store<AppS
     }
 
     const pendingActions = preloadActions.map((action: PreloadAction) => {
-      return store.dispatch(action(match));
+      return store.dispatch(action());
     });
 
     return Promise.all(pendingActions);

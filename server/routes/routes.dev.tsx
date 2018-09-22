@@ -12,7 +12,7 @@ import { renderApp, renderHtml } from '../render';
 export const devRouter = express.Router();
 
 devRouter.get('*', async (req: express.Request, res: express.Response) => {
-  const store = configureStore(createMemoryHistory({ initialEntries: [req.url] }), undefined);
+  const store = configureStore(createMemoryHistory({ initialEntries: [req.url] }));
   const assetsByChunkName = res.locals.webpackStats.toJson().assetsByChunkName;
   const { css: styles, js: scripts } = groupWebpackAssets(assetsByChunkName.bundle);
   const context: { url?: string; status?: number } = {};
