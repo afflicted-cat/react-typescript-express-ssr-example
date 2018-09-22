@@ -23,12 +23,12 @@ const defaultConfig = {
   development: {
     host: process.env.HOST || 'localhost',
     port: process.env.DEV_PORT || 3001,
-    apiUrl: ``
+    apiUrl: `https://api.github.com/`
   },
   production: {
     host: process.env.HOST || 'localhost',
     port: process.env.PROD_PORT || 8081,
-    apiUrl: ``
+    apiUrl: `https://api.github.com/`
   }
 };
 

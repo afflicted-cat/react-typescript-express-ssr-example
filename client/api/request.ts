@@ -27,6 +27,12 @@ export class RequestApi {
 
   private createRequest(method: string, url?: string, options?: RequestInit) {
     const fullOptions = Object.assign({ method }, this.defaultOptions, options);
-    return fetch(`${this.baseUrl}${url}`, fullOptions).then(res => res.json());
+    const fullUrl = `${this.baseUrl}${url}`;
+    return fetch(fullUrl, fullOptions).then(res => {
+      if (res.status !== 200) {
+        throw Error(`Failed fetch to ${fullUrl}: ${res.status} ${res.statusText}`);
+      }
+      return res.json();
+    });
   }
 }
