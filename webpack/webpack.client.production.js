@@ -6,7 +6,7 @@ const autoprefixer = require('autoprefixer');
 const merge = require('webpack-merge');
 const { cpus } = require('os');
 
-const { client } = require('./common');
+const { client, createSelectorName } = require('./common');
 const paths = require('./paths');
 
 module.exports = merge(client, {
@@ -51,10 +51,7 @@ module.exports = merge(client, {
               minimize: true,
               sourceMap: true,
               localIdentName: '[local][hash:base64:5]',
-              getLocalIdent: (loaderContext, localIdentName, localName, options) => {
-                const fromAssets = loaderContext.resourcePath.includes('assets');
-                return fromAssets ? localName : getLocalIdent(loaderContext, localIdentName, localName, options);
-              }
+              getLocalIdent: createSelectorName
             }
           },
           {

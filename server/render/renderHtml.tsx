@@ -5,9 +5,9 @@ import { Html } from './template';
 
 interface Props {
   content: string;
-  state?: string;
   styles?: string[];
   scripts?: string[];
+  initialValues?: string;
 }
 
 export const renderHtml = (props: Props) => {

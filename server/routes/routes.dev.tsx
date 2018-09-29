@@ -12,11 +12,13 @@ import { renderApp, renderHtml } from '../render';
 export const devRouter = express.Router();
 
 devRouter.get('*', async (req: express.Request, res: express.Response) => {
-  const store = configureStore(createMemoryHistory({ initialEntries: [req.url] }));
   const assetsByChunkName = res.locals.webpackStats.toJson().assetsByChunkName;
   const { css: styles, js: scripts } = groupWebpackAssets(assetsByChunkName.bundle);
-  const context: { url?: string; status?: number } = {};
+  const history = createMemoryHistory({ initialEntries: [req.url] });
   const url: string = req.url.split(/[?#]/)[0];
+  const context: { url?: string; status?: number } = {};
+
+  const store = configureStore(history);
 
   const branch = matchRoutes(appRoutes, url);
   const pendingActions = preloadData(branch, store);
@@ -30,9 +32,11 @@ devRouter.get('*', async (req: express.Request, res: express.Response) => {
       res.status(404);
     }
 
-    const state = `window.__INITIAL_STATE__ = ${serialize(store.getState())};`;
     const content = renderApp(store, context, req.url);
+    const initialValues = `
+      window.__INITIAL_STATE__ = ${serialize(store.getState())};
+    `;
 
-    return res.send(renderHtml({ content, styles, scripts, state }));
+    return res.send(renderHtml({ content, styles, scripts, initialValues }));
   });
 });

@@ -1,9 +1,16 @@
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const getLocalIdent = require('css-loader/lib/getLocalIdent');
 const nodeExternals = require('webpack-node-externals');
+const { either, contains } = require('ramda');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 
 const paths = require('./paths');
+
+const createSelectorName = (loaderContext, localIdentName, localName, options) => {
+  const fromAssets = either(contains('assets'), contains('node_modules'))(loaderContext.resourcePath);
+  return fromAssets ? localName : getLocalIdent(loaderContext, localIdentName, localName, options);
+};
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = NODE_ENV === 'development';
@@ -110,7 +117,17 @@ const server = merge(common, {
           {
             loader: 'css-loader',
             options: {
-              context: paths.root
+              modules: true,
+              importLoaders: 1,
+              context: paths.root,
+              localIdentName: '[local][hash:base64:5]',
+              getLocalIdent: createSelectorName
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              includePaths: [paths.nodeModules, paths.assets]
             }
           }
         ]
@@ -138,5 +155,6 @@ module.exports = {
   client,
   server,
   isProduction,
-  isDevelopment
+  isDevelopment,
+  createSelectorName
 };

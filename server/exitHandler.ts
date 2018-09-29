@@ -1,8 +1,5 @@
 // tslint:disable: no-any no-console
 const exitHandler = (options: any) => (err: any) => {
-  if (options.cleanup) {
-    process.stdout.write('\033c');
-  }
   if (err && err.stack) {
     process.stdout.write(err.stack);
   }
@@ -12,9 +9,6 @@ const exitHandler = (options: any) => (err: any) => {
 };
 
 process.stdin.resume();
-
-// do something when app is closing
-process.on('exit', exitHandler({ cleanup: true }));
 
 // catches ctrl+c event
 process.on('SIGINT', exitHandler({ exit: true }));

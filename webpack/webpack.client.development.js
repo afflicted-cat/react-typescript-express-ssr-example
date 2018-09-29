@@ -1,10 +1,8 @@
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
-const getLocalIdent = require('css-loader/lib/getLocalIdent');
-const WebpackBar = require('webpackbar');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 
-const { client } = require('./common');
+const { client, createSelectorName } = require('./common');
 const paths = require('./paths');
 
 const host = process.env.HOST;
@@ -36,10 +34,7 @@ module.exports = merge(client, {
               importLoaders: 1,
               context: paths.root,
               localIdentName: '[local][hash:base64:5]',
-              getLocalIdent: (loaderContext, localIdentName, localName, options) => {
-                const fromAssets = loaderContext.resourcePath.includes('assets');
-                return fromAssets ? localName : getLocalIdent(loaderContext, localIdentName, localName, options);
-              }
+              getLocalIdent: createSelectorName
             }
           },
           {
@@ -52,9 +47,5 @@ module.exports = merge(client, {
       }
     ]
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new WebpackBar({ name: 'client', compiledIn: false }),
-    new OpenBrowserPlugin({ url: `http://${host}:${port}` })
-  ]
+  plugins: [new webpack.HotModuleReplacementPlugin(), new OpenBrowserPlugin({ url: `http://${host}:${port}` })]
 });

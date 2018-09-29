@@ -136,7 +136,6 @@
     "webpack-cli": "^3.1.0",
     "webpack-manifest-plugin": "^2.0.4",
     "webpack-merge": "^4.1.4",
-    "webpack-node-externals": "^1.7.2",
-    "webpackbar": "^2.6.3"
+    "webpack-node-externals": "^1.7.2"
   }
 }

@@ -3,12 +3,12 @@ import Helmet from 'react-helmet';
 
 interface Props {
   content: string;
-  state?: string;
   styles?: string[];
   scripts?: string[];
+  initialValues?: string;
 }
 
-export function Html({ styles = [], scripts = [], content, state = '' }: Props) {
+export function Html({ content, styles = [], scripts = [], initialValues = '' }: Props) {
   const helmet = Helmet.renderStatic();
   const htmlAttrs = helmet.htmlAttributes.toComponent();
   const bodyAttrs = helmet.bodyAttributes.toComponent();
@@ -27,7 +27,7 @@ export function Html({ styles = [], scripts = [], content, state = '' }: Props) 
         {styles.map(href => (
           <link key={href} href={href} rel="stylesheet" />
         ))}
-        <script dangerouslySetInnerHTML={{ __html: state }} />
+        <script dangerouslySetInnerHTML={{ __html: initialValues }} />
       </head>
       <body {...bodyAttrs}>
         <div id="root" dangerouslySetInnerHTML={{ __html: content }} />

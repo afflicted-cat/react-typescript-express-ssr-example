@@ -22,10 +22,12 @@ if (fs.existsSync(assetsJson)) {
 }
 
 prodRouter.get('*', cacheMiddleware, async (req: express.Request, res: express.Response) => {
-  const store = configureStore(createMemoryHistory({ initialEntries: [req.url] }));
+  const history = createMemoryHistory({ initialEntries: [req.url] });
   const { css: styles, js: scripts } = groupManifestAssets(staticFiles);
-  const context: { url?: string; status?: number } = {};
   const url: string = req.url.split(/[?#]/)[0];
+  const context: { url?: string; status?: number } = {};
+
+  const store = configureStore(history);
 
   const branch = matchRoutes(appRoutes, url);
   const pendingActions = preloadData(branch, store);
@@ -39,10 +41,12 @@ prodRouter.get('*', cacheMiddleware, async (req: express.Request, res: express.R
       res.status(404);
     }
 
-    const state = `window.__INITIAL_STATE__ = ${serialize(store.getState())};`;
     const content = renderApp(store, context, req.url);
+    const initialValues = `
+      window.__INITIAL_STATE__ = ${serialize(store.getState())};
+    `;
 
-    const html = renderHtml({ content, styles, scripts, state });
+    const html = renderHtml({ content, styles, scripts, initialValues });
 
     if (context.status !== 404 && process.env.SSR_CACHE === 'true') {
       ssrCache.set(getCacheKey(req), html);
