@@ -16,6 +16,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = NODE_ENV === 'development';
 const isProduction = NODE_ENV === 'production';
 const target = process.env.TARGET || 'common';
+const isServer = target === 'server';
 const publicPath = '/';
 
 const common = {
@@ -57,11 +58,11 @@ const common = {
         loader: 'awesome-typescript-loader',
         include: [paths.client, paths.server],
         options: {
-          silent: isDevelopment,
           useCache: isDevelopment,
           forceIsolatedModules: isDevelopment,
           cacheDirectory: `node_modules/.awcache-${target}`,
-          reportFiles: ['client/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}']
+          reportFiles: ['client/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
+          configFileName: isServer ? paths.tsConfig : paths.tsConfigClient
         }
       }
     ]

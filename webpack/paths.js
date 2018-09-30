@@ -11,6 +11,7 @@ module.exports = {
   dist: resolve(root, 'dist'),
   assets: resolve(client, 'assets'),
   tsLint: resolve(root, 'tslint.json'),
+  nodeModules: resolve(root, 'node_modules'),
   tsConfig: resolve(root, 'tsconfig.json'),
-  nodeModules: resolve(root, 'node_modules')
+  tsConfigClient: resolve(root, 'tsconfig.client.json')
 };
