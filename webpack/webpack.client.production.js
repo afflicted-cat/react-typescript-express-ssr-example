@@ -1,3 +1,4 @@
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
@@ -30,7 +31,8 @@ module.exports = merge(client, {
             ascii_only: true
           }
         }
-      })
+      }),
+      new OptimizeCSSAssetsPlugin({ cssProcessorOptions: { map: { inline: false, annotations: true } } })
     ]
   },
   module: {
@@ -47,8 +49,6 @@ module.exports = merge(client, {
               modules: true,
               importLoaders: 2,
               context: paths.root,
-              minimize: true,
-              sourceMap: true,
               localIdentName: '[local][hash:base64:5]',
               getLocalIdent: createSelectorName
             }
@@ -57,8 +57,6 @@ module.exports = merge(client, {
             loader: 'postcss-loader',
             options: {
               ident: 'postcss',
-              minimize: true,
-              sourceMap: true,
               plugins: () => [
                 require('postcss-flexbugs-fixes'),
                 autoprefixer({
@@ -76,8 +74,6 @@ module.exports = merge(client, {
           {
             loader: 'sass-loader',
             options: {
-              minimize: true,
-              sourceMap: true,
               includePaths: [paths.nodeModules, paths.assets]
             }
           }
