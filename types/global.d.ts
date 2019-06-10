@@ -1,8 +1,5 @@
 // tslint:disable: no-any
 
-// global types
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
-
 // css-modules
 declare module '*.scss' {
   const styles: any;
@@ -44,6 +41,4 @@ declare module '*.ico' {
   export = content;
 }
 
-declare module 'i18next-node-remote-backend' {
-
-}
+declare module 'i18next-node-remote-backend' {}
