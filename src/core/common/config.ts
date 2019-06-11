@@ -4,6 +4,7 @@ export interface AppConfig {
   env: string;
   isDev: boolean;
   apiUrl: string;
+  useRender: boolean;
   isBrowser: boolean;
 }
 
@@ -20,7 +21,8 @@ const defaultConfig: Config = {
     env,
     isBrowser,
     apiUrl: `https://api.github.com/`,
-    isDev: process.env.NODE_ENV !== 'production'
+    isDev: process.env.NODE_ENV !== 'production',
+    useRender: Boolean(isBrowser && localStorage.getItem('useRender'))
   },
   development: {},
   production: {}

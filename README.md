@@ -1,6 +1,6 @@
 # React TypeScript Express SSR example
 
->React ssr exmaple with typescript, babel, css-modules, react-router, redux, redux-thunk, ramda, webpack 4.
+> React ssr exmaple with typescript, babel, css-modules, react-router, redux, redux-thunk, ramda, webpack 4.
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
@@ -23,6 +23,7 @@ You can read more about the organizational strategy used in this app in
 - [x] [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) 2.25
 
 ## Aliases
+
 - `@client/*` resolves to `./src/client/*`
 - `@server/*` resolves to `./src/server/*`
 - `@core/*` resolves to `./src/core/*`
@@ -34,8 +35,10 @@ Routes in project are objects with the same properties as a `<Route>` with a cou
 - the only render prop it accepts is `component` (no `render` or `children`)
 - introduces the `routes` key for sub routes
 - introduces the `preloadActions` key for preFetch on server
-- Consumers are free to add any additional props they'd like to a route, you can access `props.route` inside the `component`, this object is a reference to the object used to render and match.
-- accepts `key` prop to prevent remounting component when transition was made from route with the same component and same `key` prop
+- Consumers are free to add any additional props they'd like to a route, you can access `props.route` inside the
+  `component`, this object is a reference to the object used to render and match.
+- accepts `key` prop to prevent remounting component when transition was made from route with the same component and
+  same `key` prop
 
 ```js
 const routes = [
@@ -44,17 +47,17 @@ const routes = [
     preloadActions: someAction('someProp'), // preloadActions: {type: 'someAction', payload: someProps}
     routes: [
       {
-        path: "/",
+        path: '/',
         exact: true,
         component: Home,
         preloadActions: [someAction('someProp'), someSecondAction('someProps')]
       },
       {
-        path: "/child/:id",
+        path: '/child/:id',
         component: Child,
         routes: [
           {
-            path: "/child/:id/grand-child",
+            path: '/child/:id/grand-child',
             component: GrandChild
           }
         ]
@@ -64,12 +67,17 @@ const routes = [
 ];
 ```
 
-**Note**: Just like `<Route>`, relative paths are not (yet) supported. When it is supported there, it will be supported here.
+**Note**: Just like `<Route>`, relative paths are not (yet) supported. When it is supported there, it will be supported
+here.
 
 ## Using CSS
 
-It uses the usual SCSS css modules. You can find more information
-[here](https://github.com/css-modules/css-modules)
+It uses the usual SCSS css modules. You can find more information [here](https://github.com/css-modules/css-modules)
+
+## Render instead of hydrate in development mode
+
+To be able to reload the page and see the latest code changes, you must set the "localStorage.useRender" value in
+development mode (the hydrate method will be replaced with the render)
 
 ## Setup
 
