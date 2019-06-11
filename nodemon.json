@@ -1,5 +1,6 @@
 {
   "ext": "ts tsx",
-  "watch": ["server/**/*.ts", "server/**/*.tsx"],
-  "exec": "ts-node -r dotenv/config -r tsconfig-paths/register  server/index.tsx"
+  "ignore": ["**/*.(test|spec).(ts|js)"],
+  "watch": ["src/server/**/*.ts", "src/server/**/*.tsx"],
+  "exec": "cross-env TARGET=server webpack && node dist/index.js"
 }

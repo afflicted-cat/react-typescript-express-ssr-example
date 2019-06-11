@@ -1,73 +1,86 @@
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const getLocalIdent = require('css-loader/lib/getLocalIdent');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 const nodeExternals = require('webpack-node-externals');
-const { either, contains } = require('ramda');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 
+const { createSelectorName } = require('./utils');
 const paths = require('./paths');
-
-const createSelectorName = (loaderContext, localIdentName, localName, options) => {
-  const fromAssets = either(contains('assets'), contains('node_modules'))(loaderContext.resourcePath);
-  return fromAssets ? localName : getLocalIdent(loaderContext, localIdentName, localName, options);
-};
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = NODE_ENV === 'development';
 const isProduction = NODE_ENV === 'production';
-const target = process.env.TARGET || 'common';
-const isServer = target === 'server';
+const target = process.env.TARGET || 'client';
+const isClient = target === 'client';
 const publicPath = '/';
 
 const common = {
   mode: NODE_ENV,
-  context: paths.root,
+  context: paths.src,
   output: {
     publicPath,
     path: paths.dist
   },
   resolve: {
-    modules: ['node_modules', paths.client],
     mainFields: ['module', 'browser', 'main'],
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-    plugins: [new TsconfigPathsPlugin({ configFile: paths.tsConfig })]
+    alias: {
+      'react-dom': '@hot-loader/react-dom'
+    }
   },
   module: {
     rules: [
       {
-        enforce: 'pre',
-        test: /\.tsx?$/,
-        loader: 'tslint-loader',
-        include: [paths.client, paths.server],
-        options: {
-          emitErrors: true,
-          tsConfigFile: paths.tsConfig
-        }
-      },
-      {
-        test: /\.m?jsx?$/,
-        loader: 'babel-loader',
+        test: /\.m?([jt])sx?$/,
         exclude: paths.nodeModules,
+        loader: 'babel-loader',
         options: {
           cacheDirectory: true,
-          cacheIdentifier: target
+          compact: isProduction,
+          cacheIdentifier: target,
+          configFile: paths.babelConfig,
+          cacheCompression: isProduction
         }
       },
       {
-        test: /\.tsx?$/,
-        loader: 'awesome-typescript-loader',
-        include: [paths.client, paths.server],
+        test: /\.m?([jt])sx?$/,
+        loader: 'babel-loader',
+        include: paths.nodeModules,
+        exclude: [/@babel(?:\/|\\{1,2})runtime/, /core-js/],
         options: {
-          useCache: isDevelopment,
-          forceIsolatedModules: isDevelopment,
-          cacheDirectory: `node_modules/.awcache-${target}`,
-          reportFiles: ['client/**/*.{ts,tsx}', 'server/**/*.{ts,tsx}'],
-          configFileName: isServer ? paths.tsConfig : paths.tsConfigClient
+          babelrc: false,
+          compact: false,
+          configFile: false,
+          sourceMaps: false,
+          cacheDirectory: true,
+          cacheCompression: isProduction,
+          presets: [
+            [
+              '@babel/preset-env',
+              {
+                modules: false,
+                useBuiltIns: false,
+                exclude: ['transform-typeof-symbol']
+              }
+            ]
+          ]
+        }
+      },
+      {
+        loader: 'file-loader',
+        exclude: [/\.m?([jt])sx?$/, /\.json$/, /\.s?css$/],
+        options: {
+          emitFile: isClient,
+          name: 'assets/[name].[hash:8].[ext]'
         }
       }
     ]
   },
-  plugins: [new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)],
+  plugins: [
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new ForkTsCheckerWebpackPlugin({ tsconfig: paths.tsConfig }),
+    new CircularDependencyPlugin({ exclude: /node_modules/, failOnError: true, cwd: process.cwd() })
+  ],
   stats: {
     colors: true,
     modules: false,
@@ -81,19 +94,7 @@ const common = {
 const client = merge(common, {
   target: 'web',
   entry: {
-    bundle: ['isomorphic-fetch', './client/index']
-  },
-  module: {
-    rules: [
-      {
-        loader: 'file-loader',
-        exclude: [/\.m?e?jsx?$/, /\.tsx?$/, /\.json$/, /\.s?css$/],
-        options: {
-          context: paths.root,
-          name: 'assets/[name].[hash:8].[ext]'
-        }
-      }
-    ]
+    bundle: ['./client/index']
   },
   node: {
     fs: 'empty',
@@ -118,29 +119,29 @@ const server = merge(common, {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              importLoaders: 1,
-              context: paths.root,
-              localIdentName: '[local][hash:base64:5]',
-              getLocalIdent: createSelectorName
+              importLoaders: 2,
+              modules: {
+                mode: 'local',
+                getLocalIdent: createSelectorName,
+                localIdentName: '[local][hash:base64:5]'
+              }
+            }
+          },
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              root: paths.src
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              includePaths: [paths.nodeModules, paths.assets]
+              sourceMap: true,
+              sourceMapContents: false,
+              includePaths: [paths.nodeModules, paths.src]
             }
           }
         ]
-      },
-      {
-        loader: 'file-loader',
-        exclude: [/\.m?e?jsx?$/, /\.tsx?$/, /\.json$/, /\.s?css$/],
-        options: {
-          emitFile: false,
-          context: paths.root,
-          name: 'assets/[name].[hash:8].[ext]'
-        }
       }
     ]
   },
@@ -155,7 +156,7 @@ module.exports = {
   common,
   client,
   server,
+  publicPath,
   isProduction,
-  isDevelopment,
-  createSelectorName
+  isDevelopment
 };

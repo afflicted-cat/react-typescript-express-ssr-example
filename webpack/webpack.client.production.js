@@ -1,39 +1,54 @@
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const autoprefixer = require('autoprefixer');
+const { GenerateSW } = require('workbox-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
-const { cpus } = require('os');
 
-const { client, createSelectorName } = require('./common');
+const { client, publicPath } = require('./common');
+const { createSelectorName } = require('./utils');
 const paths = require('./paths');
+
+const workerName = 'service-worker';
+const workerManifestName = 'precache-manifes';
+
+const isWorkerRegExp = new RegExp(`${workerName}|${workerManifestName}`);
 
 module.exports = merge(client, {
   devtool: 'source-map',
   output: {
     filename: '[name].[contenthash].js',
-    chunkFilename: '[name].[contenthash].chunk.js'
+    chunkFilename: '[name].[contenthash].js'
   },
   optimization: {
     minimize: true,
     minimizer: [
-      new UglifyJsPlugin({
+      new TerserPlugin({
+        cache: true,
+        parallel: true,
         sourceMap: true,
-        parallel: cpus().length,
-        uglifyOptions: {
-          compress: {
-            warnings: false,
-            comparisons: false
+        terserOptions: {
+          parse: {
+            ecma: 8
           },
           output: {
+            ecma: 5,
             comments: false,
             ascii_only: true
           }
         }
       }),
       new OptimizeCSSAssetsPlugin({ cssProcessorOptions: { map: { inline: false, annotations: true } } })
-    ]
+    ],
+    splitChunks: {
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
   },
   module: {
     rules: [
@@ -41,40 +56,52 @@ module.exports = merge(client, {
         test: /\.s?css$/,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              sourceMap: true
+            }
           },
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              importLoaders: 2,
-              context: paths.root,
-              localIdentName: '[local][hash:base64:5]',
-              getLocalIdent: createSelectorName
+              sourceMap: true,
+              importLoaders: 3,
+              modules: {
+                mode: 'local',
+                getLocalIdent: createSelectorName,
+                localIdentName: '[local][hash:base64:5]'
+              }
             }
           },
           {
             loader: 'postcss-loader',
             options: {
+              sourceMap: true,
               ident: 'postcss',
               plugins: () => [
                 require('postcss-flexbugs-fixes'),
-                autoprefixer({
-                  browsers: [
-                    '>1%',
-                    'last 4 versions',
-                    'Firefox ESR',
-                    'not ie < 9' // React doesn't support IE8 anyway
-                  ],
-                  flexbox: 'no-2009'
+                require('postcss-preset-env')({
+                  autoprefixer: {
+                    flexbox: 'no-2009'
+                  },
+                  stage: 3
                 })
               ]
             }
           },
           {
+            loader: 'resolve-url-loader',
+            options: {
+              sourceMap: true,
+              root: paths.src
+            }
+          },
+          {
             loader: 'sass-loader',
             options: {
-              includePaths: [paths.nodeModules, paths.assets]
+              sourceMap: true,
+              sourceMapContents: false,
+              includePaths: [paths.nodeModules, paths.src]
             }
           }
         ]
@@ -82,7 +109,27 @@ module.exports = merge(client, {
     ]
   },
   plugins: [
-    new ManifestPlugin({ fileName: 'asset-manifest.json' }),
-    new MiniCssExtractPlugin({ filename: 'styles.[contenthash].css' })
+    new ManifestPlugin({
+      fileName: 'asset-manifest.json',
+      filter: ({ name }) => !isWorkerRegExp.test(name)
+    }),
+    new MiniCssExtractPlugin({ filename: 'styles.[contenthash].css' }),
+    new GenerateSW({
+      skipWaiting: false,
+      clientsClaim: false,
+      swDest: `${workerName}.js`,
+      directoryIndex: publicPath,
+      precacheManifestFilename: `${workerManifestName}.[manifestHash].js`,
+      runtimeCaching: [
+        {
+          handler: 'CacheFirst',
+          urlPattern: new RegExp('^https?://fonts.(?:googleapis|gstatic).com/(.*)')
+        },
+        {
+          handler: 'NetworkFirst',
+          urlPattern: new RegExp('/')
+        }
+      ]
+    })
   ]
 });

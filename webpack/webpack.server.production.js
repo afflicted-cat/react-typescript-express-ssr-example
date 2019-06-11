@@ -1,23 +1,21 @@
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
-const { cpus } = require('os');
 
 const { server } = require('./common');
 
 module.exports = merge(server, {
+  devtool: 'source-map',
   output: {
     filename: '[name].js'
   },
   optimization: {
     minimize: true,
     minimizer: [
-      new UglifyJsPlugin({
-        parallel: cpus().length,
-        uglifyOptions: {
-          compress: {
-            warnings: false,
-            comparisons: false
-          },
+      new TerserPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true,
+        terserOptions: {
           output: {
             comments: false,
             ascii_only: true

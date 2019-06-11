@@ -1,16 +1,15 @@
-const OpenBrowserPlugin = require('open-browser-webpack-plugin');
+const WebpackBar = require('webpackbar');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
 
-const { client, createSelectorName } = require('./common');
+const { createSelectorName } = require('./utils');
+const { client } = require('./common');
 const paths = require('./paths');
 
-const host = process.env.HOST;
-const port = process.env.DEV_PORT;
-
 module.exports = merge(client, {
+  devtool: 'cheap-module-eval-source-map',
   entry: {
-    bundle: ['webpack-hot-middleware/client']
+    bundle: ['webpack-hot-middleware/client?reload=true']
   },
   output: {
     filename: '[name].js',
@@ -24,28 +23,37 @@ module.exports = merge(client, {
           {
             loader: 'style-loader',
             options: {
-              hmr: true
+              hmr: false
             }
           },
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              importLoaders: 1,
-              context: paths.root,
-              localIdentName: '[local][hash:base64:5]',
-              getLocalIdent: createSelectorName
+              importLoaders: 2,
+              modules: {
+                mode: 'local',
+                getLocalIdent: createSelectorName,
+                localIdentName: '[local][hash:base64:5]'
+              }
+            }
+          },
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              root: paths.src
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              includePaths: [paths.nodeModules, paths.assets]
+              sourceMap: true,
+              sourceMapContents: false,
+              includePaths: [paths.nodeModules, paths.src]
             }
           }
         ]
       }
     ]
   },
-  plugins: [new webpack.HotModuleReplacementPlugin(), new OpenBrowserPlugin({ url: `http://${host}:${port}` })]
+  plugins: [new webpack.HotModuleReplacementPlugin(), new WebpackBar({ name: 'client', color: 'orange' })]
 });

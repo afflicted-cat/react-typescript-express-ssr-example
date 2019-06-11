@@ -3,15 +3,12 @@
     "outDir": "dist",
     "module": "commonjs",
     "target": "es5",
-    "lib": ["es6", "dom"],
-    "baseUrl": "client",
+    "lib": ["dom", "es2018"],
+    "baseUrl": "src",
     "paths": {
-      "common/*": ["common/*"],
-      "features/*": ["features/*"],
-      "assets/*": ["assets/*"],
-      "lib": ["lib"],
-      "api": ["api"],
-      "ui": ["ui"]
+      "@client/*": ["client/*"],
+      "@server/*": ["server/*"],
+      "@core/*": ["core/*"]
     },
     "sourceMap": true,
     "allowJs": true,
@@ -23,7 +20,9 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
-  "exclude": ["node_modules", ".storybook", "dist"]
+  "exclude": ["node_modules", "webpack", "dist"]
 }
