@@ -1,5 +1,5 @@
 {
-  "name": "react-typescript-express-ssr-boilerplate",
+  "name": "react-typescript-express-ssr-example",
   "version": "1.0.0",
   "description": "A starter for a project using TypeScript ExpressJs and ReactJs with server side rendering.",
   "scripts": {
@@ -20,14 +20,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/weyheyhey/react-typescript-express-ssr-boilerplate.git"
+    "url": "git+https://github.com/weyheyhey/react-typescript-express-ssr-example.git"
   },
   "keywords": [
-    "typescript",
-    "react",
-    "express",
-    "webpack",
+    "boilerplate",
     "css-modules",
+    "typescript",
+    "webpack",
+    "express",
+    "react",
     "redux",
     "ssr"
   ],

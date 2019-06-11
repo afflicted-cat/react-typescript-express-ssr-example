@@ -1,6 +1,6 @@
-# React TypeScript Express SSR boilerplate
+# React TypeScript Express SSR example
 
-Ready to grow boilerplate with css-modules, connected-react-router, react-router, redux, redux-thunk, ramda, webpack 4.
+React ssr exmaple with typescript,babel, css-modules, react-router, redux, redux-thunk, ramda, webpack 4.
 
 You can read more about the organizational strategy used in this app in
 [this Medium post](https://medium.com/@nate_wang/feature-oriented-architecture-for-web-applications-2b48e358afb0), or
@@ -8,17 +8,15 @@ You can read more about the organizational strategy used in this app in
 
 ## Contains
 
-- [x] [React](https://facebook.github.io/react/) 16.5
-- [x] [React Router](https://github.com/ReactTraining/react-router) 4.3
+- [x] [React](https://facebook.github.io/react/) 16.8
+- [x] [React Router](https://github.com/ReactTraining/react-router) 5.0
 - [x] [Redux](https://github.com/reactjs/redux) 4
 - [x] [Redux-Thunk](https://github.com/gaearon/redux-thunk) 2.3
-- [x] [connected-react-router](https://github.com/supasate/connected-react-router) 4.4
-- [x] [storybook](https://github.com/storybooks/storybook) 4.0.0-alpha.21
-- [x] [Ramda](https://github.com/ramda/ramda) 0.2
-- [x] [express](https://github.com/expressjs/express) 4.16
-- [x] [webpack](https://github.com/webpack/webpack-dev-middleware) 4.19
-- [x] [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) 3.3
-- [x] [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) 2.24
+- [x] [Ramda](https://github.com/ramda/ramda) 0.26
+- [x] [express](https://github.com/expressjs/express) 4.17
+- [x] [webpack](https://github.com/webpack/webpack) 4.33
+- [x] [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) 3.7
+- [x] [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) 2.25
 - [x] [babel](https://github.com/babel/babel) 7
 
 ## Setup
@@ -56,20 +54,6 @@ $ yarn build
 ```
 
 Build server & client for production
-
-## Storybook
-
-Start storybook
-
-```
-$ yarn storybook
-```
-
-Build storybook
-
-```
-$ yarn build-storybook
-```
 
 ## Analyze the Bundle Size
 
