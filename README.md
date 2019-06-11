@@ -1,6 +1,8 @@
 # React TypeScript Express SSR example
 
-React ssr exmaple with typescript,babel, css-modules, react-router, redux, redux-thunk, ramda, webpack 4.
+>React ssr exmaple with typescript,babel, css-modules, react-router, redux, redux-thunk, ramda, webpack 4.
+
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 You can read more about the organizational strategy used in this app in
 [this Medium post](https://medium.com/@nate_wang/feature-oriented-architecture-for-web-applications-2b48e358afb0), or
