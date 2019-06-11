@@ -27,6 +27,7 @@
     "url": "git+https://github.com/weyheyhey/react-typescript-express-ssr-example.git"
   },
   "keywords": [
+    "react-hot-loader",
     "boilerplate",
     "css-modules",
     "typescript",
