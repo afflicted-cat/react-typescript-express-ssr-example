@@ -60,7 +60,7 @@
     "redux-actions": "^2.6.5",
     "redux-thunk": "2.3.0",
     "reselect": "^4.0.0",
-    "serialize-javascript": "^1.7.0"
+    "serialize-javascript": "^2.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
